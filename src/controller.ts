@@ -169,4 +169,10 @@ const showRecipe = async (recipeId: string) => {
   }
 };
 
-showRecipe('5ed6604591c37cdc054bcd09');
+['load', 'hashchange'].forEach(eventType => {
+  window.addEventListener(eventType, e => {
+    if (!e.currentTarget) return;
+    const id = (e.currentTarget as Window).location.hash.slice(1);
+    showRecipe(id);
+  });
+});
