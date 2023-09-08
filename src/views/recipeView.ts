@@ -1,4 +1,5 @@
 import { type Recipe } from '../model';
+import Fraction from 'fraction.js';
 
 class RecipeView {
   private parentElement = document.querySelector('.recipe') as HTMLDivElement;
@@ -9,7 +10,7 @@ class RecipeView {
     this.parentElement.innerHTML = '';
   }
 
-  private generateMarkup() {
+  private generateMarkup(): string {
     if (!this.data) return '';
 
     const {
@@ -85,7 +86,9 @@ class RecipeView {
               </svg>
               ${
                 ingredient.quantity
-                  ? /*html*/ `<div class="recipe__quantity">${ingredient.quantity}</div>`
+                  ? /*html*/ `<div class="recipe__quantity">${new Fraction(
+                      ingredient.quantity
+                    ).toFraction(true)}</div>`
                   : ''
               }
               <div class="recipe__description">
@@ -122,7 +125,7 @@ class RecipeView {
     return markup;
   }
 
-  renderSpinner() {
+  renderSpinner(): void {
     const spinnerMarkup = /* html */ `
       <div class="spinner">
         <svg>
@@ -135,7 +138,7 @@ class RecipeView {
     this.parentElement.innerHTML = spinnerMarkup;
   }
 
-  render(data: Recipe) {
+  render(data: Recipe): void {
     this.data = data;
     this.clearHTMLContent();
     const markup = this.generateMarkup();

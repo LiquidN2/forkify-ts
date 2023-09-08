@@ -11,21 +11,6 @@ const timeout = function (s: number) {
   });
 };
 
-const API_KEY: string = import.meta.env.VITE_FORKIFY_API_KEY;
-
-const renderSpinner = (parentElement: HTMLElement): void => {
-  const spinnerMarkup = /* html */ `
-    <div class="spinner">
-      <svg>
-        <use href="src/img/icons.svg#icon-loader"></use>
-      </svg>
-    </div>
-  `;
-
-  parentElement.innerHTML = '';
-  parentElement.insertAdjacentHTML('afterbegin', spinnerMarkup);
-};
-
 const showRecipe = async (recipeId: string) => {
   try {
     recipeView.renderSpinner();

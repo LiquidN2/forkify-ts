@@ -1,3 +1,5 @@
+import { client } from './client';
+
 interface Ingredient {
   description: string;
   quantity: number | null;
@@ -25,14 +27,8 @@ export const state: State = {
 
 export const loadRecipe = async (recipeId: string) => {
   try {
-    const res = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${recipeId}`
-    );
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-    const recipe: Recipe = data.data.recipe;
+    const response = await client.get(`/recipes/${recipeId}`);
+    const recipe: Recipe = response.data.data.recipe;
     state.recipe = {
       id: recipe.id,
       title: recipe.title,
