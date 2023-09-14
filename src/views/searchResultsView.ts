@@ -1,5 +1,6 @@
 import { type Recipe } from '../model';
 import { getRecipeIdFromURL } from '../utils';
+import iconsSvg from '../img/icons.svg';
 
 import View from './View';
 
@@ -53,7 +54,7 @@ class SearchResultsView extends View {
                 <p class="preview__publisher">${publisher}</p>
                 <div class="preview__user-generated">
                   <svg>
-                    <use href="src/img/icons.svg#icon-user"></use>
+                    <use href="${iconsSvg}#icon-user"></use>
                   </svg>
                 </div>
               </div>
