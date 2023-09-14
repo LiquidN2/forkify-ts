@@ -1,16 +1,50 @@
-import { type Recipe } from '../model';
 import Fraction from 'fraction.js';
+import { type Recipe } from '../model';
+import { getRecipeIdFromURL } from '../utils';
+import View from './View';
 
-class RecipeView {
-  private parentElement = document.querySelector('.recipe') as HTMLDivElement;
+class RecipeView extends View {
+  protected data: Recipe | undefined = undefined;
 
-  private data: Recipe | undefined = undefined;
+  protected errorMessage: string = 'Unable to find recipe. Please try again';
 
-  private clearHTMLContent(): void {
-    this.parentElement.innerHTML = '';
+  protected message: string =
+    'Start by searching for a recipe or an ingredient. Have fun!';
+
+  protected parentElement = document.querySelector('.recipe') as HTMLDivElement;
+
+  addHandlerFetchRecipe(handler: (recipeId: string) => Promise<void>): void {
+    ['load', 'hashchange'].forEach(eventType => {
+      window.addEventListener(eventType, e => {
+        const recipeId = getRecipeIdFromURL(e) || '';
+        handler(recipeId);
+      });
+    });
   }
 
-  private generateMarkup(): string {
+  addHandlerUpdateServings(handler: (type: 'increase' | 'decrease') => void) {
+    this.parentElement.addEventListener('click', e => {
+      const btnIncrease = (e.target as HTMLElement).closest(
+        '.btn--increase-servings'
+      ) as HTMLButtonElement;
+
+      const btnDecrease = (e.target as HTMLElement).closest(
+        '.btn--decrease-servings'
+      ) as HTMLButtonElement;
+
+      if (btnIncrease) {
+        handler('increase');
+        return;
+      }
+
+      if (btnDecrease) {
+        handler('decrease');
+        return;
+      }
+    });
+  }
+
+  protected generateMarkup(): string {
     if (!this.data) return '';
 
     const {
@@ -48,7 +82,7 @@ class RecipeView {
           <span class="recipe__info-text">servings</span>
 
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--decrease-servings">
               <svg>
                 <use href="src/img/icons.svg#icon-minus-circle"></use>
               </svg>
@@ -80,23 +114,23 @@ class RecipeView {
           ${ingredients
             .map(ingredient => {
               return /* html */ `
-            <li class="recipe__ingredient">
-              <svg class="recipe__icon">
-                <use href="src/img/icons.svg#icon-check"></use>
-              </svg>
-              ${
-                ingredient.quantity
-                  ? /*html*/ `<div class="recipe__quantity">${new Fraction(
-                      ingredient.quantity
-                    ).toFraction(true)}</div>`
-                  : ''
-              }
-              <div class="recipe__description">
-                <span class="recipe__unit">${ingredient.unit}</span>
-                ${ingredient.description}
-              </div>
-            </li>
-            `;
+                <li class="recipe__ingredient">
+                  <svg class="recipe__icon">
+                    <use href="src/img/icons.svg#icon-check"></use>
+                  </svg>
+                  ${
+                    ingredient.quantity
+                      ? /*html*/ `<div class="recipe__quantity">${new Fraction(
+                          ingredient.quantity
+                        ).toFraction(true)}</div>`
+                      : ''
+                  }
+                  <div class="recipe__description">
+                    <span class="recipe__unit">${ingredient.unit}</span>
+                    ${ingredient.description}
+                  </div>
+                </li>
+              `;
             })
             .join('')}
         </ul>
@@ -123,26 +157,6 @@ class RecipeView {
     `;
 
     return markup;
-  }
-
-  renderSpinner(): void {
-    const spinnerMarkup = /* html */ `
-      <div class="spinner">
-        <svg>
-          <use href="src/img/icons.svg#icon-loader"></use>
-        </svg>
-      </div>
-    `;
-
-    this.clearHTMLContent();
-    this.parentElement.innerHTML = spinnerMarkup;
-  }
-
-  render(data: Recipe): void {
-    this.data = data;
-    this.clearHTMLContent();
-    const markup = this.generateMarkup();
-    this.parentElement.innerHTML = markup;
   }
 }
 
