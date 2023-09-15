@@ -16,6 +16,7 @@ export interface Recipe {
   servings: number;
   cooking_time: number;
   ingredients: Ingredient[];
+  isBookmarked: boolean;
 }
 
 export interface SearchResults {
@@ -29,12 +30,14 @@ interface State {
   query: string;
   results: SearchResults | undefined;
   recipe: Recipe | undefined;
+  bookmark: { [key: string]: Partial<Recipe> } | undefined;
 }
 
 export const state: State = {
   query: '',
   results: undefined,
   recipe: undefined,
+  bookmark: undefined,
 };
 
 export const loadRecipe = async (recipeId: string) => {
@@ -57,7 +60,12 @@ export const loadRecipe = async (recipeId: string) => {
       servings: recipe.servings,
       cooking_time: recipe.cooking_time,
       ingredients: recipe.ingredients,
+      isBookmarked: false,
     };
+
+    if (state.bookmark?.[state.recipe.id]) {
+      state.recipe.isBookmarked = true;
+    }
   } catch (err) {
     throw err;
   }
@@ -81,8 +89,6 @@ export const loadSearchResult = async (query: string) => {
       currentPage: 1,
       totalPages: Math.ceil(data.recipes.length / SEARCH_RESULTS_PER_PAGE),
     };
-
-    console.log(state.results);
   } catch (error) {
     throw error;
   }
@@ -115,4 +121,25 @@ export const updateServings = (newServings: number) => {
 
   // Update servings
   state.recipe.servings = newServings;
+};
+
+export const toggleBookmark = (recipe: Recipe): boolean => {
+  // console.log(recipe);
+  if (!state.bookmark) state.bookmark = {};
+
+  // Remove if exists
+  if (state.bookmark[recipe.id]) {
+    if (state.recipe?.id === recipe.id) {
+      state.recipe.isBookmarked = false;
+    }
+    delete state.bookmark[recipe.id];
+    return false;
+  }
+
+  // Add if not exists
+  if (state.recipe?.id === recipe.id) {
+    state.recipe.isBookmarked = true;
+  }
+  state.bookmark[recipe.id] = recipe;
+  return true;
 };

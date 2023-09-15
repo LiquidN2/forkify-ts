@@ -2,15 +2,16 @@ import { type Recipe } from '../model';
 
 import PreviewRecipe from './previewRecipeView';
 
-class SearchResultsView extends PreviewRecipe {
+class BookmarkView extends PreviewRecipe {
   protected data: Partial<Recipe>[] | undefined = undefined;
 
-  protected errorMessage: string = 'Unable to find recipe. Please try again';
+  protected errorMessage: string = 'Oops. Something went wrong!';
 
-  protected message: string = 'No search results yet.';
+  protected message: string =
+    'No bookmark yet. Find a nice recipe and save it!';
 
   protected parentElement = document.querySelector(
-    '.search-results ul.results'
+    '.bookmarks ul.bookmarks__list'
   ) as HTMLDivElement;
 
   constructor() {
@@ -19,4 +20,4 @@ class SearchResultsView extends PreviewRecipe {
   }
 }
 
-export default new SearchResultsView();
+export default new BookmarkView();

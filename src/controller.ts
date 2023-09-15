@@ -1,11 +1,14 @@
 import {
+  type Recipe,
   state,
   loadRecipe,
   loadSearchResult,
   getResultsByPage,
   updateServings,
+  toggleBookmark,
 } from './model';
 
+import bookmarkView from './views/bookmarkView';
 import paginationView from './views/paginationView';
 import recipeView from './views/recipeView';
 import searchView from './views/searchView';
@@ -93,11 +96,27 @@ const controlServings = (type: 'increase' | 'decrease') => {
   recipeView.update(state.recipe);
 };
 
+const controlBookmark = (recipe: Recipe | undefined) => {
+  if (!recipe) return;
+
+  const isBookmarked = toggleBookmark(recipe);
+
+  if (state.bookmark) {
+    bookmarkView.render(Object.values(state.bookmark));
+  }
+
+  return {
+    ...recipe,
+    isBookmarked,
+  };
+};
+
 // *******************************
 // INIT
 (async function () {
   searchView.addHandlerSearch(controlSearch);
   recipeView.addHandlerFetchRecipe(controlRecipe);
   recipeView.addHandlerUpdateServings(controlServings);
+  recipeView.addHandlerBookmark(controlBookmark);
   paginationView.addHandlerNavigate(controlPagination);
 })();

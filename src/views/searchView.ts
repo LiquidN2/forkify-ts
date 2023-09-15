@@ -1,4 +1,5 @@
 import View from './View';
+import { getRecipeIdFromURL } from '../utils';
 
 class SearchView extends View {
   protected data = undefined;
@@ -10,6 +11,21 @@ class SearchView extends View {
   protected parentElement = document.querySelector(
     'form.search'
   ) as HTMLFormElement;
+
+  constructor() {
+    super();
+    window.addEventListener('load', e => {
+      const recipeId = getRecipeIdFromURL(e);
+      if (recipeId) return;
+
+      const inputElement = (e.target as HTMLElement).querySelector(
+        'input.search__field'
+      ) as HTMLInputElement;
+      if (!inputElement) return;
+
+      inputElement.focus();
+    });
+  }
 
   addHandlerSearch(search: (query: string) => Promise<void>) {
     this.parentElement.addEventListener('submit', e => {

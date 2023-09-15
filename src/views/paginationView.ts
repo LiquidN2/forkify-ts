@@ -1,4 +1,5 @@
 import View from './View';
+import iconsSvg from '../img/icons.svg';
 
 class PaginationView extends View {
   protected data: { currentPage: number; totalPages: number } = {
@@ -56,14 +57,14 @@ class PaginationView extends View {
     return /*html*/ `
       <button class="btn--inline pagination__btn--prev">
         <svg class="search__icon">
-          <use href="src/img/icons.svg#icon-arrow-left"></use>
+          <use href="${iconsSvg}#icon-arrow-left"></use>
         </svg>
         <span>Page ${this.data.currentPage - 1}</span>
       </button>
       <button class="btn--inline pagination__btn--next">
         <span>Page ${this.data.currentPage + 1}</span>
         <svg class="search__icon">
-          <use href="src/img/icons.svg#icon-arrow-right"></use>
+          <use href="${iconsSvg}#icon-arrow-right"></use>
         </svg>
       </button>
     `;

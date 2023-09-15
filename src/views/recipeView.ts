@@ -14,6 +14,24 @@ class RecipeView extends View {
 
   protected parentElement = document.querySelector('.recipe') as HTMLDivElement;
 
+  addHandlerBookmark(handler: (recipe: Recipe | undefined) => any): void {
+    this.parentElement.addEventListener('click', e => {
+      const btnBookmark = (e.target as HTMLElement).closest(
+        '.btn--bookmark'
+      ) as HTMLElement;
+      if (!btnBookmark) return;
+
+      const { isBookmarked } = handler(this.data);
+
+      const useElement = btnBookmark.querySelector('use');
+      if (!useElement) return;
+      useElement.setAttribute(
+        'href',
+        `${iconsSvg}#icon-bookmark${isBookmarked ? '-fill' : ''}`
+      );
+    });
+  }
+
   addHandlerFetchRecipe(handler: (recipeId: string) => Promise<void>): void {
     ['load', 'hashchange'].forEach(eventType => {
       window.addEventListener(eventType, e => {
@@ -49,6 +67,7 @@ class RecipeView extends View {
     if (!this.data) return '';
 
     const {
+      id,
       title,
       publisher,
       image_url,
@@ -56,6 +75,7 @@ class RecipeView extends View {
       servings,
       ingredients,
       source_url,
+      isBookmarked,
     } = this.data;
 
     const markup = /*html*/ `
@@ -102,9 +122,11 @@ class RecipeView extends View {
           </svg>
         </div>
 
-        <button class="btn--round">
+        <button class="btn--round btn--bookmark" data-id="${id}">
           <svg class="">
-            <use href="${iconsSvg}#icon-bookmark-fill"></use>
+            <use href="${iconsSvg}#icon-bookmark${
+      isBookmarked ? '-fill' : ''
+    }"></use>
           </svg>
         </button>
       </div>
