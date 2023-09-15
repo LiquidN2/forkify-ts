@@ -1,3 +1,5 @@
+import iconsSvg from '../img/icons.svg';
+
 export default abstract class View {
   protected abstract data: any;
 
@@ -19,6 +21,10 @@ export default abstract class View {
   }
 
   protected abstract generateMarkup(data?: any): string;
+
+  static get iconsSVG() {
+    return iconsSvg;
+  }
 
   render(data: any): void {
     if (!this.parentElement) return;
@@ -56,7 +62,7 @@ export default abstract class View {
       <div class="message">
         <div>
           <svg>
-            <use href="src/img/icons.svg#icon-smile"></use>
+            <use href="${View.iconsSVG}#icon-smile"></use>
           </svg>
         </div>
         <p>${message}</p>
@@ -71,7 +77,7 @@ export default abstract class View {
     const spinnerMarkup = /* html */ `
       <div class="spinner">
         <svg>
-          <use href="src/img/icons.svg#icon-loader"></use>
+          <use href="${View.iconsSVG}#icon-loader"></use>
         </svg>
       </div>
     `;
